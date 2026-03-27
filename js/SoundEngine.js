@@ -38,53 +38,29 @@ export class SoundEngine {
     return this.muted;
   }
 
-  /**
-   * Play the full transition sound once.
-   * This is a single recorded clip of a split-flap board transition,
-   * played once per message change (not per tile).
-   */
-  playTransition() {
+  playSingleFlap() {
     if (!this.ctx || !this._audioBuffer || this.muted) return;
     this.resume();
-
-    // Stop any currently playing transition sound
-    if (this._currentSource) {
-      try {
-        this._currentSource.stop();
-      } catch (e) {
-        // ignore if already stopped
-      }
-    }
 
     const source = this.ctx.createBufferSource();
     source.buffer = this._audioBuffer;
 
     const gain = this.ctx.createGain();
-    gain.gain.value = 0.8;
+    gain.gain.value = 0.5 + (Math.random() * 0.5);
+
+    source.playbackRate.value = 0.85 + (Math.random() * 0.3);
 
     source.connect(gain);
     gain.connect(this.ctx.destination);
 
     source.start(0);
-    this._currentSource = source;
-
-    source.onended = () => {
-      if (this._currentSource === source) {
-        this._currentSource = null;
-      }
-    };
   }
 
-  /** Get the duration of the transition audio clip in ms */
   getTransitionDuration() {
-    if (this._audioBuffer) {
-      return this._audioBuffer.duration * 1000;
-    }
-    return 3800; // fallback
+    return 1000;
   }
 
-  // Keep this for API compatibility but it now plays the full transition
   scheduleFlaps() {
-    this.playTransition();
+    // Replaced by per-tile audio events
   }
 }

@@ -1,9 +1,10 @@
-import { CHARSET, SCRAMBLE_COLORS, SCRAMBLE_DURATION, FLIP_DURATION } from './constants.js';
+import { CHARSET, SCRAMBLE_COLORS, SCRAMBLE_DURATION, FLIP_DURATION } from '../js/constants.js';
 
 export class Tile {
-  constructor(row, col) {
+  constructor(row, col, soundEngine) {
     this.row = row;
     this.col = col;
+    this.soundEngine = soundEngine;
     this.currentChar = ' ';
     this.isAnimating = false;
     this._scrambleTimer = null;
@@ -50,10 +51,14 @@ export class Tile {
     setTimeout(() => {
       this.el.classList.add('scrambling');
       let scrambleCount = 0;
-      const maxScrambles = 10 + Math.floor(Math.random() * 4);
-      const scrambleInterval = 70;
+      const maxScrambles = 5 + Math.floor(Math.random() * 25);
+      const scrambleInterval = 120;
 
       this._scrambleTimer = setInterval(() => {
+        if (this.soundEngine) {
+          this.soundEngine.playSingleFlap();
+        }
+
         // Random character
         const randChar = CHARSET[Math.floor(Math.random() * CHARSET.length)];
         this.frontSpan.textContent = randChar === ' ' ? '' : randChar;

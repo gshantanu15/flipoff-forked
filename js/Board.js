@@ -1,4 +1,4 @@
-import { Tile } from './Tile.js';
+import { Tile_3D } from './Tile_3D.js';
 import {
   GRID_COLS, GRID_ROWS, STAGGER_DELAY, SCRAMBLE_DURATION,
   TOTAL_TRANSITION, ACCENT_COLORS
@@ -32,7 +32,7 @@ export class Board {
       const row = [];
       const charRow = [];
       for (let c = 0; c < this.cols; c++) {
-        const tile = new Tile(r, c);
+        const tile = new Tile_3D(r, c, this.soundEngine);
         tile.setChar(' ');
         this.gridEl.appendChild(tile.el);
         row.push(tile);
@@ -116,11 +116,6 @@ export class Board {
           hasChanges = true;
         }
       }
-    }
-
-    // Play the single transition audio clip once
-    if (hasChanges && this.soundEngine) {
-      this.soundEngine.playTransition();
     }
 
     // Update accent bar colors
