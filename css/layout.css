@@ -99,7 +99,8 @@
   border-radius: 8px;
   font-size: 14px;
   background: #fff;
-  width: 220px;
+  width: 400px;
+  max-width: 100%;
 }
 
 .hero-cta input::placeholder {

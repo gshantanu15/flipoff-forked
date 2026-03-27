@@ -2,6 +2,7 @@ import { Board } from './Board.js';
 import { SoundEngine } from './SoundEngine.js';
 import { MessageRotator } from './MessageRotator.js';
 import { KeyboardController } from './KeyboardController.js';
+import { formatTextForGrid } from './MessageFormatter.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const boardContainer = document.getElementById('board-container');
@@ -36,16 +37,32 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // "Get Early Access" button: scroll to board and go fullscreen
-  const ctaBtn = document.getElementById('cta-btn');
-  if (ctaBtn) {
-    ctaBtn.addEventListener('click', (e) => {
+  // "Add to Board" button: format message, push to rotator, and scroll
+  const addMsgBtn = document.getElementById('add-msg-btn');
+  const customMsgInput = document.getElementById('custom-msg-input');
+  
+  if (addMsgBtn && customMsgInput) {
+    const handleCustomSubmit = (e) => {
       e.preventDefault();
+      const text = customMsgInput.value.trim();
+      if (!text) return;
+      
       initAudio();
+      
+      const lines = formatTextForGrid(text);
+      rotator.addCustomMessage(lines);
+      
+      customMsgInput.value = '';
+      
       boardContainer.scrollIntoView({ behavior: 'smooth' });
-      setTimeout(() => {
-        document.documentElement.requestFullscreen().catch(() => {});
-      }, 400);
+      // Keep it completely unobtrusive; no forced fullscreen on custom submit, just scroll.
+    };
+
+    addMsgBtn.addEventListener('click', handleCustomSubmit);
+    customMsgInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        handleCustomSubmit(e);
+      }
     });
   }
 });
